@@ -1,0 +1,15 @@
+# Virtual Environments
+.venv/
+venv/
+ENV/
+
+# PyCharm IDE files
+.idea/
+
+# Python compiled bytecode and cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# macOS system files
+.DS_Store
