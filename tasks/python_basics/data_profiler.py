@@ -4,6 +4,9 @@ import random
 random_numbers = [random.randint(0, 1000) for _ in range(100)]
 
 # 2. Sort the list from min to max using the Bubble Sort algorithm
+# Conceptually, Bubble Sort repeatedly steps through the list, compares adjacent elements,
+# and swaps them if they are in the wrong order. We implement this manually to
+# practice core algorithmic thinking and list manipulation without relying on built-in functions.
 n = len(random_numbers)
 for i in range(n):
     for j in range(0, n - i - 1):
