@@ -63,7 +63,7 @@ Python_for_DataQualityEngineers/
 
 | Module / Task | Topic / Description | Timeline | Status | Directory / File |
 | :---: | :--- | :---: | :---: | :--- |
-| **Module 1** | **Python Basics**<br>Essentials, Zen of Python, Base Types, Syntax, IDE & Debugging | Sep 23 – Sep 26, 2026 | ✅ Completed | `tasks/python_basics/Python_Basics_Task.py` |
+| **Module 1** | **Python Basics**<br>Essentials, Zen of Python, Base Types, Syntax, IDE & Debugging | Sep 23 – Sep 26, 2026 | ✅ Completed | `tasks/1-python_basics` |
 | **Module 2** | *Upcoming Topics* | — | ⏳ Pending | — |
 
 ---
