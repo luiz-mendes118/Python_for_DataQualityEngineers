@@ -16,6 +16,7 @@ Before working with this repository, make sure you have the course prerequisites
 
 ## 📂 Repository Structure
 
+```text
 Python_for_DataQualityEngineers/
 │
 ├── .gitignore               # Files & directories to ignore (e.g., venv, __pycache__, .idea, .DS_Store)
