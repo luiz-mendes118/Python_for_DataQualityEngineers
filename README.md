@@ -86,19 +86,14 @@ Python_for_DataQualityEngineers/
 ## 🧪 Running Tasks & Scripts
 
 You can run your scripts directly from PyCharm or via the command line:
-
+```text
 python tasks/1-python_basics/data_profiler.py
-
 python tasks/2-collections/collections_task.py
-
 python tasks/3-string_objects/string_objects_task.py
-
 python tasks/4-functions/dictionary_merge_refactored.py
-
 python tasks/4-functions/text_cleaner_refactored.py
-
 python tasks/5-classes/classes_task.py
-
+```
 ---
 
 ## 💡 Best Practices Implemented in This Repo
