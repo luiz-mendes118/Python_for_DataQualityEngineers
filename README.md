@@ -53,14 +53,21 @@ Python_for_DataQualityEngineers/
 │   │   ├── newsfeed.txt
 │   │   ├── word_count.csv
 │   │   └── letter_count.csv
-│   └── 9-xml/               # Module 9: Enterprise XML Data Integration
-│       ├── records/
-│       ├── 9-xml_task.py
+│   ├── 9-xml/               # Module 9: Enterprise XML Data Integration
+│   │   ├── records/
+│   │   ├── 9-xml_task.py
+│   │   ├── newsfeed.txt
+│   │   ├── word_count.csv
+│   │   └── letter_count.csv
+│   └── 10-database_api/     # Module 10: Database Storage & Deduplication (SQLite)
+│       ├── records/         # Default batch input files (TXT, JSON, XML)
+│       ├── 10-databaseAPI_task.py
+│       ├── newsfeed.db      # SQLite relational database
 │       ├── newsfeed.txt
 │       ├── word_count.csv
 │       └── letter_count.csv
 │
-└── tests/                   # Shared unit and integration tests (optional)
+└── tests/                
 ```
 ---
 
@@ -104,8 +111,8 @@ Python_for_DataQualityEngineers/
 | **Module 7** | **CSV Analytics Module**<br>Word & Letter Analytics, Automated CSV Report Generation | Sep 23 – Sep 26, 2026 | ✅ Completed | `tasks/7-csv/7-csv_task.py` |
 | **Module 8** | **JSON API Data Ingestion**<br>Parsing JSON Batches, Error Handling (`JSONDecodeError`) | Sep 23 – Sep 26, 2026 | ✅ Completed | `tasks/8-json/8-json_task.py` |
 | **Module 9** | **Enterprise XML Data Integration**<br>XML Tree Parsing (`ElementTree`), Tags & Attributes | Sep 23 – Sep 26, 2026 | ✅ Completed | `tasks/9-xml/9-xml_task.py` |
-| **Module 10**| *Upcoming Data Quality & Validation Topics* | — | ⏳ Pending | — |
-
+| **Module 10**| **Database Storage & Deduplication**<br>SQLite Relational DB, Parameterized Queries, Data Quality Gates | Sep 23 – Sep 26, 2026 | ✅ Completed | `tasks/10-database_api/10-databaseAPI_task.py` |
+| **Module 11**| *Course Complete / Final Project* | — | 🎉 Completed | — |
 ---
 
 ## 🧪 Running Tasks & Scripts
@@ -122,6 +129,7 @@ python tasks/6-modules-packages-exceptions/6-tasks.py
 python tasks/7-csv/7-csv_task.py
 python tasks/8-json/8-json_task.py
 python tasks/9-xml/9-xml_task.py
+python tasks/10-database_api/10-databaseAPI_task.py
 ```
 ---
 
