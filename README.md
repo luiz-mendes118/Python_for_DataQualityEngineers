@@ -59,15 +59,18 @@ Python_for_DataQualityEngineers/
 │   │   ├── newsfeed.txt
 │   │   ├── word_count.csv
 │   │   └── letter_count.csv
-│   └── 10-database_api/     # Module 10: Database Storage & Deduplication (SQLite)
-│       ├── records/         # Default batch input files (TXT, JSON, XML)
-│       ├── 10-databaseAPI_task.py
-│       ├── newsfeed.db      # SQLite relational database
-│       ├── newsfeed.txt
-│       ├── word_count.csv
-│       └── letter_count.csv
+│   ├── 10-database_api/     # Module 10: Database Storage & Deduplication (SQLite)
+│   │   ├── records/
+│   │   ├── 10-databaseAPI_task.py
+│   │   ├── newsfeed.db
+│   │   ├── newsfeed.txt
+│   │   ├── word_count.csv
+│   │   └── letter_count.csv
+│   └── 11-pandas/           # Module 11: Pandas Data Analysis & Pipelines
+│       ├── 1-pandas_series.py    # Olympic Series Audit Task
+│       └── 2-pandas_dataframe.py # E-Commerce DataFrame Pipeline Audit Task
 │
-└── tests/                
+└── tests/                   # Shared unit and integration tests (optional)              
 ```
 ---
 
@@ -112,7 +115,9 @@ Python_for_DataQualityEngineers/
 | **Module 8** | **JSON API Data Ingestion**<br>Parsing JSON Batches, Error Handling (`JSONDecodeError`) | Sep 23 – Sep 26, 2026 | ✅ Completed | `tasks/8-json/8-json_task.py` |
 | **Module 9** | **Enterprise XML Data Integration**<br>XML Tree Parsing (`ElementTree`), Tags & Attributes | Sep 23 – Sep 26, 2026 | ✅ Completed | `tasks/9-xml/9-xml_task.py` |
 | **Module 10**| **Database Storage & Deduplication**<br>SQLite Relational DB, Parameterized Queries, Data Quality Gates | Sep 23 – Sep 26, 2026 | ✅ Completed | `tasks/10-database_api/10-databaseAPI_task.py` |
-| **Module 11**| *Course Complete / Final Project* | — | 🎉 Completed | — |
+| **Module 11**| **Pandas Data Analysis & Pipelines**<br>Olympic Series Audits & E-Commerce Vectorized DataFrame Pipelines | Sep 29, 2026 | ✅ Completed | `tasks/11-pandas/` |
+| **Module 12**| *Upcoming Advanced Data Engineering Topics* | — | ⏳ Pending | — |
+
 ---
 
 ## 🧪 Running Tasks & Scripts
@@ -130,6 +135,8 @@ python tasks/7-csv/7-csv_task.py
 python tasks/8-json/8-json_task.py
 python tasks/9-xml/9-xml_task.py
 python tasks/10-database_api/10-databaseAPI_task.py
+python tasks/11-pandas/1-pandas_series.py
+python tasks/11-pandas/2-pandas_dataframe.py
 ```
 ---
 
