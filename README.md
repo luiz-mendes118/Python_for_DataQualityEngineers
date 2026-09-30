@@ -66,11 +66,14 @@ Python_for_DataQualityEngineers/
 │   │   ├── newsfeed.txt
 │   │   ├── word_count.csv
 │   │   └── letter_count.csv
-│   └── 11-pandas/           # Module 11: Pandas Data Analysis & Pipelines
-│       ├── 1-pandas_series.py    # Olympic Series Audit Task
-│       └── 2-pandas_dataframe.py # E-Commerce DataFrame Pipeline Audit Task
+│   ├── 11-pandas/           # Module 11: Pandas Data Analysis & Pipelines
+│   │   ├── 1-pandas_series.py    # Olympic Series Audit Task
+│   │   └── 2-pandas_dataframe.py # E-Commerce DataFrame Pipeline Audit Task
+│   └── 12-final_project/    # Final Project: Geo-Distance Calculator
+│       ├── geo_distance_calculator.py
+│       └── cities.db        # SQLite knowledge base for city coordinates
 │
-└── tests/                   # Shared unit and integration tests (optional)              
+└── tests/                   # Shared unit and integration tests (optional)             
 ```
 ---
 
@@ -116,7 +119,7 @@ Python_for_DataQualityEngineers/
 | **Module 9** | **Enterprise XML Data Integration**<br>XML Tree Parsing (`ElementTree`), Tags & Attributes | Sep 23 – Sep 26, 2026 | ✅ Completed | `tasks/9-xml/9-xml_task.py` |
 | **Module 10**| **Database Storage & Deduplication**<br>SQLite Relational DB, Parameterized Queries, Data Quality Gates | Sep 23 – Sep 26, 2026 | ✅ Completed | `tasks/10-database_api/10-databaseAPI_task.py` |
 | **Module 11**| **Pandas Data Analysis & Pipelines**<br>Olympic Series Audits & E-Commerce Vectorized DataFrame Pipelines | Sep 29, 2026 | ✅ Completed | `tasks/11-pandas/` |
-| **Module 12**| *Upcoming Advanced Data Engineering Topics* | — | ⏳ Pending | — |
+| **Final Project**| **Geo-Distance Calculator**<br>Interactive Knowledge Base, SQLite Persistence, and Haversine Spherical Geometry | Sep 30, 2026 | 🎉 Completed | `tasks/12-final_project/geo_distance_calculator.py` |
 
 ---
 
@@ -137,6 +140,7 @@ python tasks/9-xml/9-xml_task.py
 python tasks/10-database_api/10-databaseAPI_task.py
 python tasks/11-pandas/1-pandas_series.py
 python tasks/11-pandas/2-pandas_dataframe.py
+python tasks/12-final_project/geo_distance_calculator.py
 ```
 ---
 
