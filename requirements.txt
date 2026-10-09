@@ -1,0 +1,7 @@
+# Module 1 — Basic Evaluation of a Local LLM
+# Pinned for reproducibility on Python 3.12. Last reviewed: 2026-08.
+# Requires a local Ollama service with the model pulled: `ollama pull llama3.2`.
+pandas==3.0.5
+scikit-learn==1.9.0
+tiktoken==0.14.0
+ollama==0.6.2
