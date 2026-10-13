@@ -1,0 +1,341 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "id": "4badb6eb",
+   "metadata": {},
+   "source": [
+    "# Sentiment Data Quality Analysis\n",
+    "\n",
+    "You are the **Data Quality Engineer** for an AI bot that labels movie sentiment from user reviews.\n",
+    "\n",
+    "- **Part A** — profile the datasets and propose remediation.\n",
+    "- **Part B** — run a small **GIGO experiment** (dirty data → clean → measure the damage), then build a\n",
+    "  **confidence-aware reference** and use it to validate the AI's `ai_sentiment` — judging the AI *and*\n",
+    "  your own reference honestly.\n",
+    "\n",
+    "See `task-sentiment-dq-analysis.md` for full instructions and the Definition of Done. Cells marked\n",
+    "`# YOUR CODE HERE` (or *replace this text*) are for you to complete."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "5a2ef372",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "%pip install -r requirements.txt"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "95930e35",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import json\n",
+    "import pandas as pd\n",
+    "import matplotlib.pyplot as plt\n",
+    "\n",
+    "users = pd.read_csv(\"users.csv\")\n",
+    "movies = pd.read_csv(\"movies.csv\")\n",
+    "reviews = pd.read_csv(\"users_reviews.csv\")\n",
+    "\n",
+    "with open(\"sentiment_ai.json\", encoding=\"utf-8\") as f:\n",
+    "    ai = pd.DataFrame(json.load(f))\n",
+    "\n",
+    "print(\"users  \", users.shape)\n",
+    "print(\"movies \", movies.shape)\n",
+    "print(\"reviews\", reviews.shape)\n",
+    "print(\"ai     \", ai.shape)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "192c7b35",
+   "metadata": {},
+   "source": [
+    "## Part A — Data Quality profiling & remediation\n",
+    "\n",
+    "Find concrete, **evidenced** issues across **Completeness, Uniqueness, Consistency/Validity, Balance &\n",
+    "Diversity, Representativeness**. For each: dimension → evidence → remediation (workflow step).\n",
+    "**Visualize at least two.** Profile `users_reviews.csv` carefully — it feeds Part B — and confirm what\n",
+    "is **clean** instead of inventing issues."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "44d3380a",
+   "metadata": {},
+   "source": [
+    "### Worked example — a reusable completeness (null) report\n",
+    "\n",
+    "One fully worked profiling helper. Reuse this pattern for the other checks."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "888029f7",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "def null_report(df, name):\n",
+    "    n = df.isna().sum()\n",
+    "    out = n[n > 0].sort_values(ascending=False).rename(\"missing\").to_frame()\n",
+    "    out[\"missing_%\"] = (out[\"missing\"] / len(df) * 100).round(1)\n",
+    "    print(f\"[{name}] rows={len(df)}\")\n",
+    "    print(out if len(out) else \"  no missing values\")\n",
+    "    print()\n",
+    "    return out\n",
+    "\n",
+    "for df, name in [(users, \"users\"), (movies, \"movies\"), (reviews, \"reviews\"), (ai, \"ai\")]:\n",
+    "    null_report(df, name)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "5f3dbadc",
+   "metadata": {},
+   "source": [
+    "### Your turn — Uniqueness, Consistency/Validity, Balance, Representativeness\n",
+    "\n",
+    "Investigate at least:\n",
+    "- **`users_reviews.csv`** (Part B depends on it): are all `rating` values inside the valid **[0, 5]**\n",
+    "  range? Are there **exact duplicate rows / duplicate `review_id`**? (Also confirm `review_date` and\n",
+    "  referential integrity to `users`/`movies` are fine.)\n",
+    "- **`movies.csv`:** duplicate `movie_id`/`title`/rows; does every `release_date` look like a date;\n",
+    "  `MPA_film_rating` and `Original_Language` distributions.\n",
+    "- **`users.csv`:** `is_active` balance; duplicate `email`; age distribution (from `date_of_birth`)."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "602c4182",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# YOUR CODE HERE\n",
+    "# Detect the issues listed above. Print the evidence (counts / value_counts) for each finding,\n",
+    "# and note which datasets/columns are actually clean.\n",
+    "raise NotImplementedError(\"Profile reviews (range + duplicates), movies, and users\")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "dfd786a7",
+   "metadata": {},
+   "source": [
+    "### Visualize at least two issues"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "885211fd",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# YOUR CODE HERE\n",
+    "# Plot at least two of the issues you found (e.g. MPA_film_rating distribution, user age histogram).\n",
+    "raise NotImplementedError(\"Add at least two visualizations\")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "c7246c28",
+   "metadata": {},
+   "source": [
+    "### Remediation proposals\n",
+    "\n",
+    "For every issue: **dimension → evidence → concrete fix**, named against a workflow step\n",
+    "(Cleaning / Validation / Transformation / Enrichment / Deduplication). State which data is **clean**.\n",
+    "\n",
+    "*Replace this text with your proposals (a table works well).*"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "114f63c6",
+   "metadata": {},
+   "source": [
+    "## Part B — GIGO experiment + honest AI validation\n",
+    "\n",
+    "First see how the dirty reviews corrupt the sentiment you would derive, then clean and re-measure,\n",
+    "then build a reference you can actually trust."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "562be11b",
+   "metadata": {},
+   "source": [
+    "### Step 1 — naive reference on the data *as given*\n",
+    "\n",
+    "Map each movie's **mean rating**: mean ≥ 4 → `positive`, 3 ≤ mean < 4 → `neutral`, mean < 3 → `negative`.\n",
+    "Then inspect the means — **do any look impossible for a 0–5 scale?** That is your first clue."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "4b36dddc",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "def sentiment_from_rating(mean_rating: float) -> str:\n",
+    "    \"\"\"mean >= 4 -> 'positive'; 3 <= mean < 4 -> 'neutral'; else 'negative'.\"\"\"\n",
+    "    # YOUR CODE HERE\n",
+    "    raise NotImplementedError\n",
+    "\n",
+    "def naive_reference(reviews_df):\n",
+    "    \"\"\"Per-movie naive label. Return columns: movie_id, mean_rating, n_reviews, naive_label.\"\"\"\n",
+    "    # YOUR CODE HERE\n",
+    "    raise NotImplementedError\n",
+    "\n",
+    "# Build the naive reference on the reviews AS GIVEN and inspect the most extreme means.\n",
+    "# YOUR CODE HERE\n",
+    "naive_dirty = None\n",
+    "raise NotImplementedError(\"Build naive_dirty and look for impossible mean ratings\")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "cba843fd",
+   "metadata": {},
+   "source": [
+    "### Step 2 & 3 — clean the reviews, then measure the GIGO damage\n",
+    "\n",
+    "Clean `users_reviews.csv` with the two rules for the issues you found:\n",
+    "1. **Uniqueness:** remove exact duplicate rows (`drop_duplicates()`).\n",
+    "2. **Validity:** keep only rows with `0 <= rating <= 5`.\n",
+    "\n",
+    "Recompute the naive reference on the clean data and find **which movies changed sentiment purely\n",
+    "because of the dirty rows** (the GIGO effect)."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "4c928695",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Build `reviews_clean`, recompute `naive_clean`, and list the flipped movies.\n",
+    "# YOUR CODE HERE\n",
+    "reviews_clean = None\n",
+    "raise NotImplementedError(\"Clean the reviews, recompute the naive reference, and list the flips\")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "d3eaa0c3",
+   "metadata": {},
+   "source": [
+    "### Step 4 — a trustworthy, confidence-aware reference\n",
+    "\n",
+    "A mean over one review, or over strongly disagreeing reviews, is not trustworthy. On the **clean**\n",
+    "data, label each movie:\n",
+    "- `low_confidence` if it has fewer than `MIN_REVIEWS` reviews;\n",
+    "- `mixed` if the rating spread (`max - min`) `>= SPREAD_MIXED`;\n",
+    "- otherwise `positive` / `neutral` / `negative` by the mean thresholds.\n",
+    "\n",
+    "The movies that get a real sentiment (not `low_confidence` / `mixed`) are the **scorable** set."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "afc3a2e0",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "MIN_REVIEWS = 2\n",
+    "SPREAD_MIXED = 3.0\n",
+    "\n",
+    "def confidence_label(mean_rating: float, n_reviews: int, spread: float) -> str:\n",
+    "    \"\"\"'low_confidence' if n_reviews < MIN_REVIEWS; 'mixed' if spread >= SPREAD_MIXED;\n",
+    "    otherwise positive/neutral/negative by the mean thresholds.\"\"\"\n",
+    "    # YOUR CODE HERE\n",
+    "    raise NotImplementedError\n",
+    "\n",
+    "# Build `reference` on the CLEAN reviews with columns:\n",
+    "#   movie_id, mean_rating, n_reviews, spread, expected\n",
+    "# YOUR CODE HERE\n",
+    "reference = None\n",
+    "raise NotImplementedError(\"Build the confidence-aware reference on the cleaned reviews\")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "6cbb7bcc",
+   "metadata": {},
+   "source": [
+    "### Step 5 — validate the AI (only where you can)\n",
+    "\n",
+    "The cell below (provided) compares `ai_sentiment` to your `reference` **on the scorable set only**,\n",
+    "reports the coverage gap, the match rate, the mismatches and the confusion matrix. It expects\n",
+    "`reference` to have columns `movie_id` and `expected`."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "f184de1d",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "val = ai.merge(reference[[\"movie_id\", \"expected\"]], on=\"movie_id\", how=\"left\")\n",
+    "\n",
+    "coverage_gap = val[val[\"expected\"].isna()]\n",
+    "judged = val.dropna(subset=[\"expected\"])\n",
+    "scorable = judged[~judged[\"expected\"].isin([\"low_confidence\", \"mixed\"])].copy()\n",
+    "scorable[\"match\"] = scorable[\"expected\"] == scorable[\"ai_sentiment\"]\n",
+    "\n",
+    "print(f\"coverage gap (no reviews) : {sorted(coverage_gap.movie_id.tolist())}\")\n",
+    "print(f\"low_confidence            : {int((judged.expected == 'low_confidence').sum())}\")\n",
+    "print(f\"mixed                     : {int((judged.expected == 'mixed').sum())}\")\n",
+    "print(f\"scorable                  : {len(scorable)}\")\n",
+    "print(f\"AI match on scorable      : {scorable.match.sum()}/{len(scorable)} ({scorable.match.mean()*100:.0f}%)\")\n",
+    "\n",
+    "print(\"\\nscorable mismatches:\")\n",
+    "display(scorable.loc[~scorable.match, [\"movie_id\", \"expected\", \"ai_sentiment\"]]\n",
+    "        .sort_values(\"movie_id\").reset_index(drop=True))\n",
+    "\n",
+    "confusion = pd.crosstab(scorable[\"expected\"], scorable[\"ai_sentiment\"])\n",
+    "print(\"\\nconfusion (rows = expected, cols = AI):\")\n",
+    "display(confusion)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "f1103018",
+   "metadata": {},
+   "source": [
+    "### Step 6 — close the loop (analysis)\n",
+    "\n",
+    "Answer below (replace this text):\n",
+    "\n",
+    "1. **GIGO:** how many labels did the dirty data flip (Step 3), and which cleaning rule fixed each\n",
+    "   (out-of-range ratings vs duplicate rows)?\n",
+    "2. **AI behaviour:** on the scorable set, is the AI biased in a systematic direction? Quantify it from\n",
+    "   the confusion matrix.\n",
+    "3. **Reference honesty:** how many movies could you **not** score (`low_confidence` + `mixed`)? Give a\n",
+    "   concrete `mixed` example and explain why scoring the AI there would be unfair to *either* side.\n",
+    "4. **Trust verdict:** can the AI sentiment be trusted as-is? What would you require before relying on it?\n",
+    "\n",
+    "*Your analysis here.*"
+   ]
+  }
+ ],
+ "metadata": {
+  "language_info": {
+   "name": "python"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 5
+}

@@ -1,0 +1,186 @@
+Question,Expected Answer,Actual Answer,Actual_tokens_model,Expected_answers_tokens,Actual_answers_tokens,Precision,Recall,F1_Score,Exact_match,Contains
+What does the acronym GIGO stand for?,"Garbage In, Garbage Out","The acronym GIGO stands for ""Garbage In, Garbage Out."" It is a phrase used to describe the idea that the quality of the output of a system or process is only as good as the quality of the input. In other words, if the input is of poor quality or inaccurate, the output will also be of poor quality or inaccurate.",72,7,71,0.05128205128205128,0.6666666666666666,0.09523809523809523,0,1
+Which evaluation metric is the harmonic mean of precision and recall?,F1 score,The evaluation metric that is the harmonic mean of precision and recall is F1 score.,18,3,17,0.07692307692307693,0.5,0.13333333333333333,0,1
+"In classification, what does recall measure?",The proportion of actual positives that are correctly identified,"In classification, recall (also known as sensitivity or true positive rate) measures the proportion of actual positive instances that are correctly classified as positive. In other words, it measures the number of true positives (correctly predicted positive instances) divided by the total number of actual positive instances.
+
+Recall is often expressed as a percentage or a decimal value, and it is calculated as:
+
+Recall = TP / (TP + FN)
+
+where TP is the number of true positives (correctly predicted positive instances) and FN is the number of false negatives (incorrectly predicted negative instances).
+
+For example, if a model predicts 80 positive instances out of 100 actual positive instances, and 60 of those predictions are correct, the recall would be 60/100 = 0.6 or 60%.",161,9,160,0.10666666666666667,0.8888888888888888,0.19047619047619047,0,0
+What is a hallucination in a large language model?,When the model generates confident but false or fabricated information,"In the context of large language models, a hallucination refers to a situation where the model generates text that is not based on any actual input or context, but rather on its own internal knowledge or biases. This can result in the model producing information that is incorrect, incomplete, or even nonsensical.
+
+Hallucinations can occur when a large language model is faced with a task that requires it to generate text that is not grounded in reality. For example, if a model is asked to describe a fictional event or a hypothetical scenario, it may generate text that is not based on any actual evidence or facts.
+
+There are several types of hallucinations that can occur in large language models, including:
+
+1. **Factoid hallucinations**: The model generates facts that are not true, such as false information about a particular topic or event.
+2. **Analogical hallucinations**: The model generates text that is based on analogies or metaphors that are not relevant to the actual task or context.
+3. **Semantic hallucinations**: The model generates text that is based on its own internal semantic representations, rather than on the actual meaning of the input text.
+
+Hallucinations can be caused by a variety of factors, including:
+
+1. **Overfitting**: The model has become too specialized to the training data and is not generalizing well to new, unseen data.
+2. **Lack of domain knowledge**: The model may not have sufficient knowledge or understanding of the topic or domain it is being asked to work on.
+3. **Biases in the training data**: The model may have been trained on biased or incomplete data, which can lead to hallucinations.
+
+To mitigate hallucinations, researchers and developers use various techniques, such as:
+
+1. **Data augmentation**: Adding more diverse and representative data to the training set to help the model generalize better.
+2. **Regularization techniques**: Using techniques such as dropout or weight decay to prevent overfitting.
+3. **Knowledge graph-based approaches**: Using knowledge graphs to provide the model with additional context and information about the topic or domain.
+4. **Human evaluation**: Having human evaluators review and correct the model's output to identify and correct hallucinations.",445,10,444,0.04519774011299435,0.8,0.0855614973262032,0,0
+Which data quality dimension measures whether required data is missing?,Completeness,"The data quality dimension that measures whether required data is missing is called ""Completeness"". Completeness refers to the extent to which all required data is present and available for analysis or processing. It is a measure of how complete or complete the data is, and it is often used to evaluate the quality of data.
+
+In data quality, completeness is often measured as a percentage, with 100% indicating that all required data is present, and 0% indicating that no data is present.",98,2,97,0.020833333333333332,1.0,0.04081632653061224,0,1
+What is a golden dataset used for in testing?,A trusted labelled reference set used to measure quality,"A golden dataset is a dataset that is considered to be the ""gold standard"" or the reference point for a particular dataset or model. It is used as a benchmark or a reference point for testing and validation purposes.
+
+In testing, a golden dataset is used to evaluate the performance of a model or a system by comparing its output with the expected output, which is defined by the golden dataset. The goal is to determine how well the model or system matches the expected output, and to identify any discrepancies or errors.
+
+Golden datasets are often used in the following scenarios:
+
+1. Model validation: A golden dataset is used to validate the performance of a machine learning model or a neural network. The model's output is compared with the golden dataset to determine how well it matches the expected output.
+2. Data quality control: A golden dataset is used to check the quality of a dataset by comparing it with the expected output. This helps to identify any errors or inconsistencies in the dataset.
+3. Testing and validation: A golden dataset is used to test and validate the performance of a system or a model. The system's output is compared with the golden dataset to determine how well it meets the expected requirements.
+4. Data standardization: A golden dataset is used to standardize data formats and structures. The golden dataset serves as a reference point for data formatting and validation.
+
+Golden datasets are typically used in industries such as:
+
+1. Healthcare: Golden datasets are used to validate medical diagnoses and treatments.
+2. Finance: Golden datasets are used to validate financial transactions and trading decisions.
+3. E-commerce: Golden datasets are used to validate customer data and transactional data.
+4. Quality control: Golden datasets are used to validate product quality and manufacturing processes.
+
+In summary, a golden dataset is a reference point used to evaluate the performance of a model or system by comparing its output with the expected output, which is defined by the golden dataset.",385,9,384,0.045871559633027525,0.5555555555555556,0.0847457627118644,0,0
+What does the term ground truth mean in model evaluation?,The correct expected answer used as a reference,"In model evaluation, the term ""ground truth"" refers to the actual, true values or labels that a dataset or a test set is supposed to represent. It is the correct, expected output or classification that a model should aim to predict or match.
+
+In other words, the ground truth is the ""true"" or ""actual"" value that a model is trying to learn or replicate. It is the standard or reference point against which the model's performance is evaluated.
+
+For example, in a classification problem, the ground truth might be a binary label (e.g., 0 or 1, yes or no, etc.). In a regression problem, the ground truth might be a continuous value (e.g., a predicted price or a continuous rating).
+
+The ground truth is typically obtained from a separate, independent dataset or a gold standard, which is not used to train the model. This allows the model to be evaluated on its ability to generalize and make accurate predictions on unseen data.
+
+The term ""ground truth"" is often used interchangeably with ""true labels"" or ""actual labels"", but it specifically refers to the correct, expected output that a model is trying to learn or replicate.",238,8,237,0.05,0.625,0.09259259259259259,0,0
+Why is setting a fixed random seed useful in an experiment?,To make results reproducible,"Setting a fixed random seed is useful in an experiment for several reasons:
+
+1. **Reproducibility**: By setting a fixed random seed, you can ensure that the same sequence of random numbers is generated every time the experiment is run. This allows you to reproduce the results exactly, which is essential for validating the findings and comparing them to other experiments.
+2. **Consistency**: A fixed random seed ensures that the experiment is conducted consistently, without any variability introduced by random chance. This is particularly important in experiments where the outcome is sensitive to the initial conditions.
+3. **Avoiding bias**: Random number generators can sometimes introduce bias, especially if the seed is not properly initialized. By setting a fixed random seed, you can minimize the risk of bias and ensure that the results are not influenced by the random number generator.
+4. **Comparability**: When multiple experiments are run with fixed random seeds, it's easier to compare the results directly. This is because the same sequence of random numbers is used, allowing for a more accurate comparison of the outcomes.
+5. **Debugging**: If an issue arises during the experiment, having a fixed random seed makes it easier to debug and identify the problem. You can reproduce the issue by running the experiment again with the same seed.
+6. **Validation**: Setting a fixed random seed allows you to validate the results of your experiment by running it multiple times and verifying that the same outcome is consistently obtained.
+
+In summary, setting a fixed random seed is essential for ensuring reproducibility, consistency, and comparability in experiments, while also minimizing the risk of bias and making it easier to debug and validate the results.",333,5,332,0.014925373134328358,0.5,0.028985507246376812,0,0
+What is prompt injection?,An attack that manipulates a model through crafted input to override its instructions,"Prompt injection is a technique used in natural language processing (NLP) and machine learning to improve the performance of language models, such as chatbots, virtual assistants, and language translation systems.
+
+In traditional NLP, the input to a language model is typically a fixed-length sequence of tokens, such as words or characters. However, in many real-world applications, the input can be variable-length, and the model may need to process a stream of text or a sequence of tokens with varying lengths.
+
+Prompt injection is a method to inject additional information into the input sequence to help the model better understand the context and meaning of the input. This additional information can be in the form of a prompt, which is a short text or phrase that provides context and guidance to the model.
+
+The goal of prompt injection is to improve the model's ability to:
+
+1. Understand the context and meaning of the input
+2. Identify the relevant information in the input
+3. Generate more accurate and relevant responses
+
+Prompt injection can be used in various ways, such as:
+
+1. Pre-training: Injecting prompts into the training data to help the model learn to recognize patterns and relationships in the input.
+2. Fine-tuning: Using prompts to fine-tune the model's performance on a specific task or dataset.
+3. Inference: Injecting prompts into the input sequence to help the model generate more accurate and relevant responses.
+
+Prompt injection has several benefits, including:
+
+1. Improved performance: Prompt injection can improve the model's performance on a variety of tasks, including language translation, text summarization, and question answering.
+2. Increased flexibility: Prompt injection allows the model to be more flexible and adaptable to different input sequences and contexts.
+3. Reduced bias: Prompt injection can help reduce bias in the model's responses by providing additional context and guidance.
+
+However, prompt injection also has some challenges and limitations, such as:
+
+1. Overfitting: The model may overfit to the injected prompts, which can lead to poor performance on unseen data.
+2. Contextual understanding: The model may struggle to understand the context and meaning of the input, especially if the prompt is not well-designed.
+3. Interpretability: The model's responses may be difficult to interpret, especially if the prompt is not transparent.
+
+Overall, prompt injection is a powerful technique for improving the performance and flexibility of language models, but it requires careful design and tuning to achieve optimal results.",490,14,489,0.02857142857142857,0.38461538461538464,0.05319148936170213,0,0
+What does data drift refer to?,A change in the input data distribution over time that degrades model performance,"Data drift refers to the gradual change in the distribution of data over time, often due to changes in the underlying process or population being modeled. This can occur due to various reasons such as:
+
+1. Changes in the population or process being modeled
+2. Shifts in the underlying patterns or relationships
+3. New data being added that alters the distribution
+4. Changes in the data collection process or instrumentation
+
+Data drift can lead to inaccurate predictions, models, or decisions, as the data distribution may no longer accurately represent the underlying reality. It's a common challenge in machine learning, statistics, and data science, where models are often trained on historical data and may not perform well on new, unseen data.
+
+Data drift can be categorized into two types:
+
+1. Concept drift: This occurs when the underlying concept or relationship changes over time, requiring the model to adapt to the new patterns.
+2. Distribution drift: This occurs when the distribution of the data changes over time, requiring the model to adapt to the new distribution.
+
+To mitigate data drift, data scientists and analysts use various techniques such as:
+
+1. Continuous monitoring of data distributions
+2. Regular model retraining and updating
+3. Using ensemble methods or transfer learning
+4. Incorporating domain knowledge and expert feedback
+5. Using techniques such as online learning or incremental learning.",269,14,268,0.07758620689655173,0.6923076923076923,0.13953488372093023,0,0
+What is tokenization in natural language processing?,Splitting text into smaller units called tokens,"Tokenization is a fundamental concept in natural language processing (NLP) that involves breaking down text into individual units called tokens. Tokens can be words, characters, or subwords (smaller units within words) that represent meaningful elements of the text.
+
+In tokenization, the input text is divided into tokens based on certain criteria, such as:
+
+1. Word boundaries: Tokens are separated by spaces, punctuation marks, or special characters.
+2. Subwording: Tokens are split into subwords (smaller units within words) using techniques like wordpiece tokenization or character-level tokenization.
+3. Character-level tokenization: Tokens are individual characters, such as letters or digits.
+
+The purpose of tokenization is to:
+
+1. Preprocess text data for NLP tasks, such as text classification, sentiment analysis, or language modeling.
+2. Convert text data into a format that can be processed by machine learning algorithms.
+3. Enable efficient processing and analysis of large text datasets.
+
+Common tokenization techniques include:
+
+1. Wordpiece tokenization: splits words into subwords based on a vocabulary of words.
+2. Character-level tokenization: splits text into individual characters.
+3. Space-based tokenization: splits text into words based on spaces.
+
+Tokenization has many applications in NLP, including:
+
+1. Text classification: tokenization helps to preprocess text data for classification tasks.
+2. Sentiment analysis: tokenization enables the analysis of sentiment in text data.
+3. Language modeling: tokenization is used to build language models that can predict the next word in a sequence.
+4. Information retrieval: tokenization helps to retrieve relevant documents from a large corpus.
+
+In summary, tokenization is a crucial step in NLP that involves breaking down text into individual units called tokens, which can be words, characters, or subwords, to enable efficient processing and analysis of text data.",379,8,378,0.037037037037037035,0.7142857142857143,0.07042253521126761,0,0
+What is the difference between precision and recall?,Precision is correct positives among predicted positives; recall is correct positives among actual positives,"Precision and recall are two fundamental concepts in evaluating the performance of a classification model, particularly in binary classification problems.
+
+**Precision**:
+
+Precision is the ratio of true positives (correctly predicted positive instances) to the total number of positive predictions made by the model. It measures the accuracy of the model in predicting positive instances.
+
+Precision = True Positives (TP) / (True Positives (TP) + False Positives (FP))
+
+In other words, precision measures how many of the positive predictions made by the model are actually correct.
+
+**Recall**:
+
+Recall, also known as sensitivity or true positive rate, is the ratio of true positives (correctly predicted positive instances) to the total number of actual positive instances.
+
+Recall = True Positives (TP) / (True Positives (TP) + False Negatives (FN))
+
+In other words, recall measures how many of the actual positive instances are correctly predicted by the model.
+
+**Key differences**:
+
+1. **Focus**: Precision focuses on the accuracy of positive predictions, while recall focuses on the detection of actual positive instances.
+2. **False positives vs. false negatives**: Precision is concerned with false positives (incorrectly predicted positive instances), while recall is concerned with false negatives (missed actual positive instances).
+3. **Interpretation**: Precision is often used to evaluate the model's ability to avoid false positives, while recall is used to evaluate the model's ability to detect actual positive instances.
+
+To illustrate the difference, consider a medical diagnosis model that predicts whether a patient has a disease or not. A high precision might mean that the model correctly identifies most of the patients who actually have the disease, but a low recall might mean that the model misses some of the patients who actually have the disease.
+
+In summary, precision measures the accuracy of positive predictions, while recall measures the detection of actual positive instances. Both metrics are important in evaluating the performance of a classification model.",391,15,390,0.048,0.6666666666666666,0.08955223880597014,0,0
+What does the abbreviation SQL stand for?,Structured Query Language,SQL stands for Structured Query Language.,9,3,8,0.3333333333333333,0.6666666666666666,0.4444444444444444,0,1
+What does the abbreviation HTML stand for?,HyperText Markup Language,The abbreviation HTML stands for HyperText Markup Language.,11,4,10,0.25,0.6666666666666666,0.36363636363636365,0,1
+"Which number is larger, 9.9 or 9.11?",9.9,9.11 is larger than 9.9.,12,3,11,0.0,0.0,0.0,0,1
+How many times does the letter r appear in the word strawberry?,Three,"The letter ""r"" appears twice in the word ""strawberry"".",16,1,15,0.0,0.0,0.0,0,0

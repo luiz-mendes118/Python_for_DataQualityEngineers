@@ -1,0 +1,6 @@
+# Module 2 — Sentiment Data Quality Analysis
+# Reuse the Python 3.12 virtual environment from Module 1, then: pip install -r requirements.txt
+# Fully offline and deterministic — no LLM / Ollama required.
+pandas==3.0.5
+matplotlib==3.11.1
+seaborn==0.13.2
