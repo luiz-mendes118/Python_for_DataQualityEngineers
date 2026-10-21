@@ -1,0 +1,363 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "id": "51d45d75",
+   "metadata": {},
+   "source": [
+    "# Emotion Classification — Data Remediation & Fine-tuning Verification\n",
+    "\n",
+    "You are the **Data Quality Engineer** for an emotion classifier (6 classes) whose quality dropped.\n",
+    "\n",
+    "- **Part A** — audit and **fix the training data** (labels + normalization).\n",
+    "- **Part B** — fine-tune with a **one-click** helper (you do *not* write the training loop) and\n",
+    "  **verify** the result like a DQE: base vs fine-tuned, generalization, per-class behavior, the\n",
+    "  label mapping, and *why* it still fails.\n",
+    "\n",
+    "See `task-emotion-classification.md` for the full brief and Definition of Done. Cells marked\n",
+    "`# YOUR CODE HERE` (or *replace this text*) are for you. **CPU only** — the first run downloads\n",
+    "~250 MB of weights; training both models takes ~5 minutes."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "befa7825",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "%pip install -r requirements.txt"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "399093a6",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import warnings, random\n",
+    "import numpy as np, pandas as pd, torch\n",
+    "warnings.filterwarnings(\"ignore\")\n",
+    "from transformers import (AutoTokenizer, AutoModelForSequenceClassification,\n",
+    "                          Trainer, TrainingArguments, pipeline, set_seed)\n",
+    "from datasets import Dataset\n",
+    "from sklearn.metrics import f1_score, classification_report, confusion_matrix\n",
+    "import matplotlib.pyplot as plt\n",
+    "\n",
+    "SEED = 42\n",
+    "EMOTIONS = [\"sadness\", \"joy\", \"love\", \"anger\", \"fear\", \"surprise\"]  # label id 0..5\n",
+    "LABEL2ID = {e: i for i, e in enumerate(EMOTIONS)}\n",
+    "\n",
+    "def seed_all(s=SEED):\n",
+    "    random.seed(s); np.random.seed(s); torch.manual_seed(s); set_seed(s)\n",
+    "\n",
+    "raw = pd.read_csv(\"hometask_dataset.csv\")\n",
+    "test_df = pd.read_csv(\"emotion_test.csv\")\n",
+    "print(\"train:\", raw.shape, \"| test:\", test_df.shape)\n",
+    "raw.head()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "dd83c9fc",
+   "metadata": {},
+   "source": [
+    "## Part A — Audit & remediate the training data\n",
+    "\n",
+    "The training file has `text`, `label` (int 0–5, what the model trains on) and `emotion` (the name).\n",
+    "Label ids: **0 sadness · 1 joy · 2 love · 3 anger · 4 fear · 5 surprise**."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "9f84fefa",
+   "metadata": {},
+   "source": [
+    "### A quick look (provided)\n",
+    "\n",
+    "Notice which column is incomplete and which one is not — that is your clue for the fix."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "e531d79b",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "print(\"label nulls :\", int(raw[\"label\"].isna().sum()), \"of\", len(raw))\n",
+    "print(\"emotion nulls:\", int(raw[\"emotion\"].isna().sum()))\n",
+    "print(\"\\ncount per emotion name:\")\n",
+    "print(raw[\"emotion\"].value_counts())"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "44281bcc",
+   "metadata": {},
+   "source": [
+    "### Your turn — quantify the problems\n",
+    "\n",
+    "Using `LABEL2ID` to map `emotion` → the correct id, find:\n",
+    "- how many rows have `label` **different from** `map(emotion)` (mislabeled), and\n",
+    "- how many rows have `text` that is **not lowercased**."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "a7fe80d8",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# YOUR CODE HERE\n",
+    "# Print: count of missing labels, count of label != map(emotion), count of non-lowercase text.\n",
+    "raise NotImplementedError(\"Quantify missing labels, label/emotion mismatches, and casing\")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "cc8cb68c",
+   "metadata": {},
+   "source": [
+    "### Your turn — build `clean_df`\n",
+    "\n",
+    "Repair the labels **from the trustworthy source column**, and normalize the text. **Do not use**\n",
+    "`fillna(0)` — that fabricates *sadness* labels instead of recovering the real ones."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "cc54bbb8",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Build clean_df with columns text, label  (repaired labels + lowercased text).\n",
+    "# YOUR CODE HERE\n",
+    "clean_df = None\n",
+    "raise NotImplementedError(\"Produce clean_df (labels recovered from `emotion`, text lowercased)\")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "dc9bbdc3",
+   "metadata": {},
+   "source": [
+    "### Remediation summary\n",
+    "\n",
+    "For each issue write: **evidence → fix → workflow step** (Cleaning / Validation / Transformation /\n",
+    "Enrichment / Deduplication). Note the class balance of `clean_df` — is anything still under-represented?\n",
+    "\n",
+    "*Replace this text with your summary.*"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "4f922e49",
+   "metadata": {},
+   "source": [
+    "## Part B — Fine-tune (one click) & verify\n",
+    "\n",
+    "Training is provided below as a single function. You run it; you do **not** edit it. Your job is to\n",
+    "**verify** the outcome."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "109f70fc",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# ---- provided training / evaluation helpers (do not edit) ----\n",
+    "def _make_dataset(texts, labels, tokenizer):\n",
+    "    ds = Dataset.from_dict({\"text\": list(texts), \"labels\": list(labels)})\n",
+    "    return ds.map(lambda ex: tokenizer(ex[\"text\"], padding=\"max_length\", truncation=True, max_length=64),\n",
+    "                  batched=True).remove_columns([\"text\"])\n",
+    "\n",
+    "def fine_tune(train_df, epochs=2):\n",
+    "    \"\"\"One-click fine-tune of distilbert-base-uncased on (text, label). Returns (model, tokenizer).\"\"\"\n",
+    "    seed_all()\n",
+    "    tokenizer = AutoTokenizer.from_pretrained(\"distilbert-base-uncased\")\n",
+    "    model = AutoModelForSequenceClassification.from_pretrained(\n",
+    "        \"distilbert-base-uncased\", num_labels=6, id2label=dict(enumerate(EMOTIONS)), label2id=LABEL2ID)\n",
+    "    ds = _make_dataset(train_df[\"text\"], train_df[\"label\"], tokenizer)\n",
+    "    args = TrainingArguments(output_dir=\"_out\", num_train_epochs=epochs, per_device_train_batch_size=16,\n",
+    "        learning_rate=5e-5, fp16=False, report_to=[], seed=SEED,\n",
+    "        eval_strategy=\"no\", save_strategy=\"no\", logging_strategy=\"epoch\")\n",
+    "    Trainer(model=model, args=args, train_dataset=ds).train()\n",
+    "    return model, tokenizer\n",
+    "\n",
+    "def predict(model, tokenizer, texts):\n",
+    "    model.eval()\n",
+    "    enc = tokenizer(list(texts), padding=\"max_length\", truncation=True, max_length=64, return_tensors=\"pt\")\n",
+    "    out = []\n",
+    "    with torch.no_grad():\n",
+    "        for i in range(0, len(texts), 64):\n",
+    "            logits = model(input_ids=enc[\"input_ids\"][i:i+64], attention_mask=enc[\"attention_mask\"][i:i+64]).logits\n",
+    "            out.extend(logits.argmax(-1).tolist())\n",
+    "    return out\n",
+    "\n",
+    "def macro_f1(y_true, y_pred):\n",
+    "    return f1_score(y_true, y_pred, average=\"macro\")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "7ff19669",
+   "metadata": {},
+   "source": [
+    "### Step 1 — train two models (one click each)\n",
+    "\n",
+    "`dirty_df` is the *do-nothing* baseline (raw labels with the `fillna(0)` shortcut). `clean_df` is your\n",
+    "remediated data from Part A. Each call takes ~2–3 minutes on CPU."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "04a8b875",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "dirty_df = raw.assign(label=raw[\"label\"].fillna(0).astype(int))[[\"text\", \"label\"]]\n",
+    "\n",
+    "model_dirty, tok_dirty = fine_tune(dirty_df)\n",
+    "model_clean, tok_clean = fine_tune(clean_df)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "98a6f8c5",
+   "metadata": {},
+   "source": [
+    "### Step 2 — four anchors on the held-out test set\n",
+    "\n",
+    "Compare **base** (untrained head, the floor), **dirty**, **clean**, and a published **external**\n",
+    "model (the ceiling) on `emotion_test.csv` — data none of them trained on."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "44a0e81d",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "y_test = test_df[\"label\"].tolist()\n",
+    "texts_test = test_df[\"text\"].str.lower().tolist()   # same normalization as training\n",
+    "\n",
+    "seed_all()\n",
+    "base = AutoModelForSequenceClassification.from_pretrained(\"distilbert-base-uncased\", num_labels=6)\n",
+    "tok_base = AutoTokenizer.from_pretrained(\"distilbert-base-uncased\")\n",
+    "pred_base = predict(base, tok_base, texts_test)\n",
+    "pred_dirty = predict(model_dirty, tok_dirty, texts_test)\n",
+    "pred_clean = predict(model_clean, tok_clean, texts_test)\n",
+    "\n",
+    "ext = pipeline(\"text-classification\", model=\"bhadresh-savani/distilbert-base-uncased-emotion\", top_k=1)\n",
+    "pred_ext = [LABEL2ID[(r[0] if isinstance(r, list) else r)[\"label\"]] for r in ext(texts_test, truncation=True)]\n",
+    "\n",
+    "print(\"macro-F1 on the held-out test set:\")\n",
+    "for name, pred in [(\"base (floor)\", pred_base), (\"dirty\", pred_dirty),\n",
+    "                   (\"clean\", pred_clean), (\"external (ceiling)\", pred_ext)]:\n",
+    "    print(f\"  {name:20s} {macro_f1(y_test, pred):.3f}\")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "c9746970",
+   "metadata": {},
+   "source": [
+    "### Step 3 — look *inside* the metric (per-class + confusion)\n",
+    "\n",
+    "A single accuracy number hides collapsed classes. Read the per-class F1 and the confusion matrices."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "fd76f908",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "print(\"=== DIRTY per-class ===\")\n",
+    "print(classification_report(y_test, pred_dirty, target_names=EMOTIONS, zero_division=0))\n",
+    "print(\"=== CLEAN per-class ===\")\n",
+    "print(classification_report(y_test, pred_clean, target_names=EMOTIONS, zero_division=0))\n",
+    "\n",
+    "fig, axes = plt.subplots(1, 2, figsize=(11, 4))\n",
+    "for ax, pred, title in [(axes[0], pred_dirty, \"dirty\"), (axes[1], pred_clean, \"clean\")]:\n",
+    "    cm = confusion_matrix(y_test, pred, labels=range(6))\n",
+    "    ax.imshow(cm, cmap=\"Blues\")\n",
+    "    ax.set_title(f\"confusion — {title}\")\n",
+    "    ax.set_xticks(range(6)); ax.set_xticklabels(EMOTIONS, rotation=45, ha=\"right\")\n",
+    "    ax.set_yticks(range(6)); ax.set_yticklabels(EMOTIONS)\n",
+    "    ax.set_xlabel(\"predicted\"); ax.set_ylabel(\"true\")\n",
+    "    for i in range(6):\n",
+    "        for j in range(6):\n",
+    "            ax.text(j, i, cm[i, j], ha=\"center\", va=\"center\", fontsize=8)\n",
+    "plt.tight_layout(); plt.show()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "f6aa9776",
+   "metadata": {},
+   "source": [
+    "### Step 4 — verify the label mapping\n",
+    "\n",
+    "A teammate wrote `LABELS_GUESS` below to turn predicted ids into emotion names. **Is it correct?**\n",
+    "The model's `config.id2label` is the real source of truth. A wrong hardcoded list mis-maps every\n",
+    "prediction while accuracy still looks normal — a classic silent bug."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "d36a91ba",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "LABELS_GUESS = sorted(EMOTIONS)   # a teammate's hardcoded list\n",
+    "\n",
+    "check = [(\"i feel so happy and grateful today\", \"joy\"),\n",
+    "         (\"i am absolutely terrified of what might happen\", \"fear\"),\n",
+    "         (\"i really love spending time with you\", \"love\")]\n",
+    "\n",
+    "# YOUR CODE HERE\n",
+    "# For each sentence: predict the id with model_clean, then show the name from BOTH\n",
+    "# LABELS_GUESS[id] and model_clean.config.id2label[id]. Which is right? Is LABELS_GUESS safe?\n",
+    "raise NotImplementedError(\"Verify the label mapping against config.id2label\")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "2576b516",
+   "metadata": {},
+   "source": [
+    "### Step 5 — diagnosis & verdict\n",
+    "\n",
+    "Answer (replace this text):\n",
+    "\n",
+    "1. **Fine-tuning worked?** How far does *clean* sit above *base*, and below the *external* ceiling?\n",
+    "2. **Class collapse:** which classes does the *dirty* model fail on entirely, and why (tie it to what\n",
+    "   `fillna(0)` and the mislabels did to the data)?\n",
+    "3. **Label mapping:** was `LABELS_GUESS` correct? How did you prove it?\n",
+    "4. **Residual failure:** which class does *clean* still get wrong, and is that a **data** problem or a\n",
+    "   **model** problem? What is the concrete fix (tie it to your Part A balance finding)?\n",
+    "5. **Verdict:** is the re-fine-tuned model trustworthy as-is? What would you require before relying on it?\n",
+    "\n",
+    "*Your analysis here.*"
+   ]
+  }
+ ],
+ "metadata": {
+  "language_info": {
+   "name": "python"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 5
+}

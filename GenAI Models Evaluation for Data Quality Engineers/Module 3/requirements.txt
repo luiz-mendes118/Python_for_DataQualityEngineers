@@ -1,0 +1,10 @@
+# Module 3 — Emotion Classification: data remediation + fine-tuning verification
+# Reuse the Python 3.12 virtual environment from Module 1, then: pip install -r requirements.txt
+# CPU-only (no GPU needed). First run downloads ~250 MB of model weights from Hugging Face.
+transformers==5.16.1
+datasets==5.0.1
+torch==2.13.0
+accelerate==1.14.0
+scikit-learn==1.9.0
+pandas==3.0.5
+matplotlib==3.11.1
