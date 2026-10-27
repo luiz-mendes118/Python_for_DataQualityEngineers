@@ -1,0 +1,350 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "id": "1b5dd798",
+   "metadata": {},
+   "source": [
+    "# Prompt Engineering for Hallucination Testing\n",
+    "\n",
+    "You are the **Data Quality Engineer** for an HR chatbot that must **refuse** (say it doesn't know)\n",
+    "instead of inventing answers, and keep replies **short** (mobile).\n",
+    "\n",
+    "- **Part 1** — a short, runnable warm-up on prompt techniques (ungraded).\n",
+    "- **Part 2** — build a small **test harness** that measures hallucination **before vs after** you\n",
+    "  improve the system prompt.\n",
+    "\n",
+    "See `task-prompt-engineering-lab.md` for the full brief. Cells marked `# YOUR CODE HERE` (or *replace\n",
+    "this text*) are for you. Runs a **local** model via **Ollama** (`llama3.2`) — no cloud, no GPU."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "504f6969",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "%pip install -r requirements.txt"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "f9dcf157",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import ollama\n",
+    "import pandas as pd\n",
+    "\n",
+    "MODEL = \"llama3.2\"\n",
+    "\n",
+    "def ask(system, user, temperature=0.0):\n",
+    "    \"\"\"Send a (system, user) prompt to the local model and return the reply text.\"\"\"\n",
+    "    messages = ([{\"role\": \"system\", \"content\": system}] if system else []) + \\\n",
+    "               [{\"role\": \"user\", \"content\": user}]\n",
+    "    r = ollama.chat(model=MODEL, messages=messages, options={\"temperature\": temperature})\n",
+    "    return r.message.content.strip()\n",
+    "\n",
+    "try:\n",
+    "    ask(\"\", \"ping\")\n",
+    "    print(f\"Ollama + {MODEL} ready\")\n",
+    "except Exception as e:\n",
+    "    print(\"Ollama not reachable. Start it and run `ollama pull llama3.2`. Details:\", e)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "92031999",
+   "metadata": {},
+   "source": [
+    "## Part 1 — Prompt techniques warm-up (ungraded)\n",
+    "\n",
+    "Run these to feel how the **same model** reacts to different techniques (`temperature = 0`, so your\n",
+    "output should match). No deliverable — just build intuition for Part 2."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "58fab6e9",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Zero-shot vs few-shot classification\n",
+    "text = \"The plot dragged and I nearly fell asleep.\"\n",
+    "zero = f\"Classify the sentiment as positive, negative, or neutral. Reply with one word.\\nText: {text}\\nSentiment:\"\n",
+    "few = (\"Classify the sentiment as positive, negative, or neutral. Reply with one word.\\n\"\n",
+    "       \"Text: Absolutely loved every minute. Sentiment: positive\\n\"\n",
+    "       \"Text: It was fine, nothing special. Sentiment: neutral\\n\"\n",
+    "       f\"Text: {text} Sentiment:\")\n",
+    "print(\"zero-shot ->\", ask(\"\", zero))\n",
+    "print(\"few-shot  ->\", ask(\"\", few))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "511b4154",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Chain-of-thought: a direct question vs 'let's think step by step'\n",
+    "q = (\"I baked 15 muffins. I ate 2 and gave 5 to a neighbor. \"\n",
+    "     \"My partner bought 6 more and ate 2. How many muffins do we have now?\")\n",
+    "print(\"direct ->\", ask(\"\", q + \" Answer with just the number.\"))\n",
+    "print(\"CoT    ->\", ask(\"\", q + \" Let's think step by step.\"))"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "71b54c73",
+   "metadata": {},
+   "source": [
+    "## Part 2 — Build a hallucination test harness\n",
+    "\n",
+    "The chatbot's **system prompt** carries the company's *Known Policies*. You are given a **weak** system\n",
+    "prompt (it hallucinates) and a test set. You will measure the failure, build checks, fix the prompt,\n",
+    "and prove the improvement."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "b95c2ee1",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# ---- provided: policies, the weak system prompt, and the test set ----\n",
+    "POLICIES = \"\"\"Full-time employees: 21 vacation days/year.\n",
+    "Part-time (30+ hours/week): Prorated vacation.\n",
+    "Carryover: Up to 5 days with HR approval by Dec 1.\n",
+    "Parental leave: 12 weeks (primary caregivers).\n",
+    "No vacation during probation (first 3 months).\n",
+    "Europe offices: +3 days to standard policy.\n",
+    "Sabbatical eligibility: 5+ years of service.\n",
+    "Emergency leave: 5 paid days/year.\"\"\"\n",
+    "\n",
+    "WEAK_SYSTEM = (\"You are a corporate HR assistant. Please provide all possible information that you \"\n",
+    "               \"can be considering generic knowledge.\\nKnown Policies:\\n\" + POLICIES)\n",
+    "\n",
+    "# (question, category, expected)  category: in = answerable, out = must refuse, edge = refuse or expected word\n",
+    "TEST_SET = [\n",
+    "    (\"How many vacation days do full-time employees get?\", \"in\", \"21\"),\n",
+    "    (\"What is the carryover limit for unused vacation days?\", \"in\", \"5\"),\n",
+    "    (\"How long is parental leave for primary caregivers?\", \"in\", \"12\"),\n",
+    "    (\"How many emergency leave days do I get per year?\", \"in\", \"5\"),\n",
+    "    (\"Can I exchange vacation days for cash?\", \"out\", None),\n",
+    "    (\"Does the company offer unlimited mental health days?\", \"out\", None),\n",
+    "    (\"How many paid sick days do I get?\", \"out\", None),\n",
+    "    (\"What is the bereavement leave policy?\", \"out\", None),\n",
+    "    (\"Can I take a 6-month paid sabbatical after 2 years of service?\", \"out\", None),\n",
+    "    (\"How many vacation days do I get if I work part-time?\", \"edge\", \"prorat\"),\n",
+    "    (\"Can I combine parental leave with vacation days in Q4?\", \"edge\", None),\n",
+    "]"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "f2c6200b",
+   "metadata": {},
+   "source": [
+    "### Step 1 — see the failure\n",
+    "\n",
+    "Run the **weak** prompt on a couple of questions the policy does **not** cover. Notice it invents a\n",
+    "long, confident answer instead of refusing."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "0d294b1a",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "for q in [\"Can I exchange vacation days for cash?\", \"How many paid sick days do I get?\"]:\n",
+    "    print(\"Q:\", q)\n",
+    "    print(\"A:\", ask(WEAK_SYSTEM, q)[:300], \"\\n\")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "8008f72a",
+   "metadata": {},
+   "source": [
+    "### Step 2 — build the checks\n",
+    "\n",
+    "Implement `is_refusal(text)` — the core of the harness. It should return `True` when the reply is a\n",
+    "refusal / \"I don't know\" (e.g. contains phrases like *\"I don't have this information\"*, *\"contact HR\"*,\n",
+    "*\"I don't know\"*, *\"not covered\"*) rather than a substantive answer."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "614af75e",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "def is_refusal(text):\n",
+    "    \"\"\"Return True if `text` is a refusal / 'I don't know' rather than a substantive answer.\"\"\"\n",
+    "    # YOUR CODE HERE\n",
+    "    raise NotImplementedError"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "ea38c30e",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# ---- provided: run a system prompt over the test set and score it (uses your is_refusal) ----\n",
+    "def evaluate(system_prompt, tests, temperature=0.0):\n",
+    "    rows = []\n",
+    "    for q, cat, exp in tests:\n",
+    "        a = ask(system_prompt, q, temperature)\n",
+    "        refused = is_refusal(a)\n",
+    "        if cat == \"out\":\n",
+    "            passed = refused                              # must refuse\n",
+    "        elif cat == \"in\":\n",
+    "            passed = (exp in a) and not refused           # must state the fact\n",
+    "        else:                                             # edge: refuse, or give the expected word\n",
+    "            passed = refused or (exp is not None and exp in a.lower())\n",
+    "        rows.append({\"cat\": cat, \"question\": q, \"words\": len(a.split()),\n",
+    "                     \"refused\": refused, \"pass\": passed, \"answer\": a[:70]})\n",
+    "    return pd.DataFrame(rows)\n",
+    "\n",
+    "def summarize(df, label):\n",
+    "    o, i = df[df.cat == \"out\"], df[df.cat == \"in\"]\n",
+    "    print(f\"{label:7s} | out-of-policy refusal {int(o.refused.sum())}/{len(o)} | \"\n",
+    "          f\"in-policy correct {int(i['pass'].sum())}/{len(i)} | avg words {df.words.mean():.0f}\")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "591b4fe8",
+   "metadata": {},
+   "source": [
+    "### Step 3 — engineer a better system prompt\n",
+    "\n",
+    "Write `STRONG_SYSTEM`: answer **only** from the Known Policies; **refuse with a fixed phrase** when the\n",
+    "answer isn't covered; **never invent** numbers/dates; keep answers **short**. Reuse the `POLICIES` text."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "51009659",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# YOUR CODE HERE  (build the improved system prompt string; include the POLICIES text)\n",
+    "STRONG_SYSTEM = None\n",
+    "raise NotImplementedError(\"Write the improved anti-hallucination system prompt\")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "63cd6b9d",
+   "metadata": {},
+   "source": [
+    "### Step 4 — measure before vs after\n",
+    "\n",
+    "Run the harness with both prompts on the **same** test set and compare."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "ba23ca17",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "df_weak = evaluate(WEAK_SYSTEM, TEST_SET)\n",
+    "df_strong = evaluate(STRONG_SYSTEM, TEST_SET)\n",
+    "summarize(df_weak, \"WEAK\")\n",
+    "summarize(df_strong, \"STRONG\")\n",
+    "\n",
+    "print(\"\\n--- STRONG per-case ---\")\n",
+    "display(df_strong[[\"cat\", \"question\", \"refused\", \"pass\", \"words\"]])"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "eed2e638",
+   "metadata": {},
+   "source": [
+    "### Step 5 — consistency check\n",
+    "\n",
+    "At `temperature = 1` the model is non-deterministic. Run one **out-of-policy** question 5 times with\n",
+    "each prompt and see which one behaves **consistently** (Section 2 — intra-prompt consistency)."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "ab1e25a9",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "q = \"How many paid sick days do I get?\"   # not in the policy -> should always refuse\n",
+    "print(f\"Consistency on {q!r} (5 runs @ temperature=1)\\n\")\n",
+    "for label, sysp in [(\"WEAK\", WEAK_SYSTEM), (\"STRONG\", STRONG_SYSTEM)]:\n",
+    "    refused = sum(is_refusal(ask(sysp, q, temperature=1.0)) for _ in range(5))\n",
+    "    print(f\"  {label:7s} refused {refused}/5 times\")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "d711d62e",
+   "metadata": {},
+   "source": [
+    "### Step 6 — your own test cases & verdict\n",
+    "\n",
+    "Add **three** of your own cases: an **ambiguous** query, a **non-existent** policy, and an **edge** case."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "f6c01faa",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Each item: (question, category, expected)  with category in {\"in\", \"out\", \"edge\"}.\n",
+    "MY_TESTS = [\n",
+    "    # (\"...\", \"out\", None),\n",
+    "]\n",
+    "# YOUR CODE HERE  (add three cases above, then evaluate the strong prompt on them)\n",
+    "raise NotImplementedError(\"Add three test cases (ambiguous / non-existent / edge) and evaluate\")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "5a3fd41a",
+   "metadata": {},
+   "source": [
+    "### Verdict\n",
+    "\n",
+    "Answer (replace this text):\n",
+    "\n",
+    "1. **Why did the weak prompt hallucinate?** (look at its wording)\n",
+    "2. **Why is *out-of-policy refusal rate* the right signal here**, and why would overall accuracy hide the problem?\n",
+    "3. **Before vs after:** what did your prompt change (refusal, length, in-policy correctness)?\n",
+    "4. **Over-refusal:** did the strong prompt wrongly refuse any *in-policy* question?\n",
+    "5. **Ship or not?** Is the chatbot safe to deploy? What would you still test (adversarial phrasing, bigger policy set, other models)?\n",
+    "\n",
+    "*Your analysis here.*"
+   ]
+  }
+ ],
+ "metadata": {
+  "language_info": {
+   "name": "python"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 5
+}

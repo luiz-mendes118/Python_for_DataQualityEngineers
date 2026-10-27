@@ -1,0 +1,6 @@
+# Module 4 — Prompt Engineering for AI Testing: hallucination test harness
+# Reuse the Python 3.12 virtual environment from Module 1, then: pip install -r requirements.txt
+# Runs a LOCAL model via Ollama (llama3.2) — no cloud, no EPAM DIAL, no GPU.
+# Ensure Ollama is running and llama3.2 is pulled (see the Module 1 setup for install/pull/start).
+ollama==0.6.2
+pandas==3.0.5
