@@ -1,0 +1,11 @@
+# Module 5 — Ethical & Bias Testing (consolidated)
+# Reuse the Python 3.12 virtual environment from Module 1, then: pip install -r requirements.txt
+# CPU-only. Part 4 uses a LOCAL model via Ollama (llama3.2) — no cloud, no EPAM DIAL, no API keys.
+# First run downloads a small toxicity model (~450 MB) from Hugging Face; after that it is offline.
+# Ensure Ollama is running and llama3.2 is pulled (see the Module 1 setup).
+transformers==5.16.1
+torch==2.13.0
+scikit-learn==1.9.0
+pandas==3.0.5
+matplotlib==3.11.1
+ollama==0.6.2
